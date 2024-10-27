@@ -9,6 +9,7 @@ import {
   Search,
   Send,
   Settings,
+  X,
 } from "lucide-react";
 import { HttpMethod, Header, ResponseData, Collection } from "./types";
 import HeadersEditor from "./HeadersEditor";
@@ -28,6 +29,15 @@ const APITester: React.FC = () => {
   const [authorization, setAuthorization] = React.useState<Authorization>({
     type: "none",
   });
+  const [abortController, setAbortController] =
+    React.useState<AbortController | null>(null);
+  const cancelRequest = () => {
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+      setLoading(false);
+    }
+  };
 
   const methodOptions = [
     { value: "GET", label: "GET" },
@@ -74,6 +84,9 @@ const APITester: React.FC = () => {
       return;
     }
 
+    // Create new AbortController for this request
+    const controller = new AbortController();
+    setAbortController(controller);
     setLoading(true);
     const startTime = Date.now();
 
@@ -88,7 +101,6 @@ const APITester: React.FC = () => {
         {} as Record<string, string>
       );
 
-      // Add authorization header if needed
       if (authorization.type === "bearer" && authorization.token) {
         requestHeaders["Authorization"] = `Bearer ${authorization.token}`;
       }
@@ -97,6 +109,7 @@ const APITester: React.FC = () => {
         method,
         headers: requestHeaders,
         body: ["POST", "PUT", "PATCH"].includes(method) ? body : undefined,
+        signal: controller.signal, // Add the abort signal
       };
 
       const response = await fetch(url, requestOptions);
@@ -116,15 +129,28 @@ const APITester: React.FC = () => {
         time: Date.now() - startTime,
       });
     } catch (error) {
-      setResponse({
-        status: 0,
-        headers: {},
-        data:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        time: Date.now() - startTime,
-      });
+      // Check if the error is due to abortion
+      if (error instanceof Error && error.name === "AbortError") {
+        setResponse({
+          status: 0,
+          headers: {},
+          data: "Request cancelled",
+          time: Date.now() - startTime,
+        });
+      } else {
+        setResponse({
+          status: 0,
+          headers: {},
+          data:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+          time: Date.now() - startTime,
+        });
+      }
     } finally {
       setLoading(false);
+      setAbortController(null);
     }
   };
 
@@ -133,6 +159,14 @@ const APITester: React.FC = () => {
       sendRequest();
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      if (abortController) {
+        abortController.abort();
+      }
+    };
+  }, [abortController]);
 
   return (
     <div className="h-screen flex">
@@ -228,7 +262,9 @@ const APITester: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white border-b p-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-800">REST API Tester</h1>
+            <h1 className="text-xl font-bold text-gray-800">
+              Calm REST Client
+            </h1>
             <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded">
               <Save className="w-4 h-4" />
               Save Request
@@ -257,14 +293,24 @@ const APITester: React.FC = () => {
                 className="flex-1 px-3 py-2 border rounded-lg"
               />
 
-              <button
-                onClick={sendRequest}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600 disabled:opacity-50"
-                disabled={loading || !url.trim()}
-              >
-                <Send className="w-4 h-4" />
-                Send
-              </button>
+              {!loading ? (
+                <button
+                  onClick={sendRequest}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600 disabled:opacity-50"
+                  disabled={!url.trim()}
+                >
+                  <Send className="w-4 h-4" />
+                  Send
+                </button>
+              ) : (
+                <button
+                  onClick={cancelRequest}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-600"
+                >
+                  <X className="w-4 h-4" />
+                  Stop
+                </button>
+              )}
             </div>
 
             {/* Request/Response Panels */}

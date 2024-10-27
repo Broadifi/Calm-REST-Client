@@ -45,7 +45,7 @@ const AuthorizationEditor: React.FC<AuthorizationEditorProps> = ({
             className="w-full px-3 py-2 border rounded-lg text-sm"
           />
           <div className="text-xs text-gray-500">
-            Token will be sent as: Bearer {authorization.token || "[token]"}
+            Token will be sent as: Bearer [TOKEN]
           </div>
         </div>
       )}

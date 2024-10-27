@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "api-tester-desktop",
+        "title": "Calm REST Client",
         "width": 1000,
         "height": 700
       }
