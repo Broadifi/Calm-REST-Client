@@ -40,25 +40,37 @@ const Dropdown: React.FC<DropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 
+          bg-white dark:bg-gray-800 
+          border border-gray-200 dark:border-gray-700 
+          rounded-lg 
+          hover:bg-gray-50 dark:hover:bg-gray-700 
+          focus:outline-none focus:ring-2 focus:ring-primary-500/50 dark:focus:ring-primary-400/50
+          text-gray-900 dark:text-gray-100
+          transition-colors duration-200"
       >
         <div className="flex items-center gap-2 text-sm">
           {icon}
-          <span className="text-gray-700">
+          <span className="text-gray-700 dark:text-gray-200">
             {options.find((opt) => opt.value === value)?.label ||
               placeholder ||
               "Select..."}
           </span>
         </div>
         <ChevronDown
-          className={`w-4 h-4 transition-transform ${
+          className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg">
+        <div
+          className="absolute z-50 w-full mt-1 
+          bg-white dark:bg-gray-800 
+          border border-gray-200 dark:border-gray-700 
+          rounded-lg shadow-lg dark:shadow-lg dark:shadow-black/20"
+        >
           <div className="py-1 max-h-60 overflow-auto">
             {options.map((option) => (
               <button
@@ -67,11 +79,12 @@ const Dropdown: React.FC<DropdownProps> = ({
                   onChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100
+                className={`w-full text-left px-3 py-2 text-sm
+                  transition-colors duration-200
                   ${
                     value === option.value
-                      ? "bg-gray-50 text-blue-600"
-                      : "text-gray-700"
+                      ? "bg-primary-50 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
               >
                 {option.label}

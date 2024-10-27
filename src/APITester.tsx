@@ -18,6 +18,8 @@ import ResponseViewer from "./ResponseViewer";
 import AuthorizationEditor from "./AuthorizationEditor";
 import { Authorization } from "./types";
 import Dropdown from "./components/Dropdown";
+import ThemeToggle from "./components/ThemeToggle";
+import Sidebar from "./components/Sidebar";
 
 const APITester: React.FC = () => {
   const [method, setMethod] = React.useState<HttpMethod>("GET");
@@ -77,6 +79,27 @@ const APITester: React.FC = () => {
   ]);
   const [selectedEnvironment, setSelectedEnvironment] =
     React.useState<string>("Development");
+
+  const handleCollectionToggle = (collectionId: string) => {
+    setCollections(
+      collections.map((collection) =>
+        collection.id === collectionId
+          ? { ...collection, isOpen: !collection.isOpen }
+          : collection
+      )
+    );
+  };
+
+  const handleRequestSelect = (collectionId: string, requestId: string) => {
+    const collection = collections.find((c) => c.id === collectionId);
+    const request = collection?.requests.find((r) => r.id === requestId);
+
+    if (request) {
+      setMethod(request.method);
+      setUrl(request.url);
+      // You can add more state updates here
+    }
+  };
 
   const sendRequest = async (): Promise<void> => {
     if (!url.trim()) {
@@ -169,110 +192,40 @@ const APITester: React.FC = () => {
   }, [abortController]);
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-50 border-r flex flex-col">
-        {/* Environment Selector */}
-        <div className="p-3 border-b">
-          <Dropdown
-            value={selectedEnvironment}
-            onChange={setSelectedEnvironment}
-            options={environmentOptions}
-            icon={<Globe className="w-4 h-4 text-gray-500" />}
-            placeholder="Select environment"
-          />
-        </div>
-
-        {/* Search Bar */}
-        <div className="p-3 border-b">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-white border rounded-md">
-            <Search className="w-4 h-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search requests..."
-              className="flex-1 bg-transparent outline-none text-sm"
-            />
-          </div>
-        </div>
-
-        {/* Collections List */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Collections</span>
-              <button className="p-1 hover:bg-gray-200 rounded">
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-
-            {collections.map((collection) => (
-              <div key={collection.id} className="mb-2">
-                <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer">
-                  {collection.isOpen ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                  <FolderOpen className="w-4 h-4" />
-                  <span className="text-sm">{collection.name}</span>
-                </div>
-
-                {collection.isOpen && (
-                  <div className="ml-4 mt-1">
-                    {collection.requests.map((request) => (
-                      <div
-                        key={request.id}
-                        className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer"
-                      >
-                        <span
-                          className={`text-xs font-mono ${
-                            request.method === "GET"
-                              ? "text-green-600"
-                              : request.method === "POST"
-                              ? "text-blue-600"
-                              : request.method === "PUT"
-                              ? "text-orange-600"
-                              : request.method === "DELETE"
-                              ? "text-red-600"
-                              : "text-gray-600"
-                          }`}
-                        >
-                          {request.method}
-                        </span>
-                        <span className="text-sm truncate">{request.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Settings Button */}
-        <div className="p-3 border-t">
-          <button className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-200 rounded">
-            <Settings className="w-4 h-4" />
-            <span className="text-sm">Settings</span>
-          </button>
-        </div>
-      </div>
+      <Sidebar
+        collections={collections}
+        selectedEnvironment={selectedEnvironment}
+        onEnvironmentChange={setSelectedEnvironment}
+        onCollectionToggle={handleCollectionToggle}
+        onRequestSelect={handleRequestSelect}
+        onAddCollection={() => {
+          // Implement add collection logic
+        }}
+        onSettingsClick={() => {
+          // Implement settings click logic
+        }}
+      />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b p-4">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-800">
+            <h1 className="text-xl font-bold text-gray-800 dark:text-white">
               Calm REST Client
             </h1>
-            <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded">
-              <Save className="w-4 h-4" />
-              Save Request
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/50 dark:hover:bg-primary-900 text-primary-600 dark:text-primary-400 rounded">
+                <Save className="w-4 h-4" />
+                Save Request
+              </button>
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
           <div className="space-y-4">
             {/* URL Bar */}
             <div className="flex gap-2">
@@ -290,13 +243,13 @@ const APITester: React.FC = () => {
                 onChange={(e) => setUrl(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Enter request URL"
-                className="flex-1 px-3 py-2 border rounded-lg"
+                className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
 
               {!loading ? (
                 <button
                   onClick={sendRequest}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600 disabled:opacity-50"
+                  className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-700 disabled:opacity-50"
                   disabled={!url.trim()}
                 >
                   <Send className="w-4 h-4" />
@@ -316,21 +269,27 @@ const APITester: React.FC = () => {
             {/* Request/Response Panels */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
-                <div className="bg-white border rounded-lg p-4">
-                  <h2 className="text-lg font-semibold mb-2">Headers</h2>
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
+                    Headers
+                  </h2>
                   <HeadersEditor headers={headers} setHeaders={setHeaders} />
                 </div>
 
-                <div className="bg-white border rounded-lg p-4">
-                  <h2 className="text-lg font-semibold mb-2">Authorization</h2>
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
+                    Authorization
+                  </h2>
                   <AuthorizationEditor
                     authorization={authorization}
                     setAuthorization={setAuthorization}
                   />
                 </div>
 
-                <div className="bg-white border rounded-lg p-4">
-                  <h2 className="text-lg font-semibold mb-2">Request Body</h2>
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
+                    Request Body
+                  </h2>
                   <RequestBodyEditor
                     body={body}
                     setBody={setBody}
@@ -339,8 +298,10 @@ const APITester: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white border rounded-lg p-4">
-                <h2 className="text-lg font-semibold mb-2">Response</h2>
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">
+                  Response
+                </h2>
                 <ResponseViewer response={response} loading={loading} />
               </div>
             </div>

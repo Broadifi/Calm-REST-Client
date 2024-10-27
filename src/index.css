@@ -16,3 +16,24 @@
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
   }
+
+  @layer base {
+    html {
+      @apply h-full;
+    }
+    
+    body {
+      @apply h-full bg-white dark:bg-gray-900;
+    }
+  
+    #root {
+      @apply h-full;
+    }
+  }
+  
+  /* Smooth transitions for theme switching */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }

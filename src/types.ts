@@ -73,3 +73,9 @@ export interface AuthorizationEditorProps {
     isOpen?: boolean;
     requests: SavedRequest[];
   }
+
+export interface ContentTypeOption {
+  value: ContentType;
+  label: string;
+  icon: React.ReactNode;
+}
