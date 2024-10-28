@@ -47,18 +47,25 @@ const JsonViewer: React.FC<JsonViewerProps> = ({
       <span>
         <span className="text-gray-400 select-none">
           {isCollapsible && (
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hover:bg-gray-200 rounded p-1 focus:outline-none"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="w-3 h-3 inline" />
-              ) : (
-                <ChevronDown className="w-3 h-3 inline" />
+            <>
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="hover:bg-gray-200 rounded p-1 focus:outline-none"
+              >
+                {isCollapsed ? (
+                  <ChevronRight className="w-3 h-3 inline" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 inline" />
+                )}
+              </button>
+              {isCollapsed && (
+                <span className="text-xs text-gray-500 mr-1">
+                  {data.length} {data.length === 1 ? "item" : "items"}
+                </span>
               )}
-            </button>
+            </>
           )}
-          [
+          [{isCollapsed ? "..." : ""}
         </span>
         {!isCollapsed && (
           <>
@@ -93,18 +100,26 @@ const JsonViewer: React.FC<JsonViewerProps> = ({
       <span>
         <span className="text-gray-400 select-none">
           {isCollapsible && (
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hover:bg-gray-200 rounded p-1 focus:outline-none"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="w-3 h-3 inline" />
-              ) : (
-                <ChevronDown className="w-3 h-3 inline" />
+            <>
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="hover:bg-gray-200 rounded p-1 focus:outline-none"
+              >
+                {isCollapsed ? (
+                  <ChevronRight className="w-3 h-3 inline" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 inline" />
+                )}
+              </button>
+              {isCollapsed && (
+                <span className="text-xs text-gray-500 mr-1">
+                  {entries.length} {entries.length === 1 ? "key" : "keys"}
+                </span>
               )}
-            </button>
+            </>
           )}
           {"{"}
+          {isCollapsed ? "..." : ""}
         </span>
         {!isCollapsed && (
           <>
