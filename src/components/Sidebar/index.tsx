@@ -3,17 +3,19 @@ import { Globe, Search, Settings, Folder, History } from "lucide-react";
 import Collections from "./Collections";
 import HistoryView from "./History";
 import { TabSet, type Tab } from "../ui/Tabs";
-import { Collection } from "../../types";
+import { Collection, HistoryEntry } from "../../types";
 import Dropdown from "../ui/Dropdown";
 
 interface SidebarProps {
   collections: Collection[];
+  history: HistoryEntry[];
   selectedEnvironment: string;
   onEnvironmentChange: (env: string) => void;
   onCollectionToggle: (collectionId: string) => void;
   onRequestSelect?: (collectionId: string, requestId: string) => void;
   onAddCollection?: () => void;
   onSettingsClick?: () => void;
+  onHistorySelect: (history: HistoryEntry) => void;
 }
 
 const tabs: Tab[] = [
@@ -31,12 +33,14 @@ const tabs: Tab[] = [
 
 const Sidebar: React.FC<SidebarProps> = ({
   collections,
+  history = [],
   selectedEnvironment,
   onEnvironmentChange,
   onCollectionToggle,
   onRequestSelect,
   onAddCollection,
   onSettingsClick,
+  onHistorySelect,
 }) => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<"collections" | "history">(
@@ -103,7 +107,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             onAddCollection={onAddCollection}
           />
         )}
-        {activeTab === "history" && <HistoryView />}
+        {activeTab === "history" && (
+          <HistoryView history={history} onSelectHistory={onHistorySelect} />
+        )}
       </div>
 
       {/* Settings Button */}

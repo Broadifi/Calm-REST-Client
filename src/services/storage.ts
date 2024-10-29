@@ -1,5 +1,5 @@
 import { load, Store } from '@tauri-apps/plugin-store';
-import { Collection, HistoryEntry } from '../types';
+import { Collection, CreateHistoryEntry, HistoryEntry, HttpMethod } from '../types';
 
 // Define the shape of our storage data
 interface AppStorage {
@@ -61,13 +61,18 @@ export class StorageManager {
         }
     }
 
-    // History
-    async addHistoryEntry(entry: HistoryEntry): Promise<void> {
+    async addHistoryEntry(entry: CreateHistoryEntry): Promise<HistoryEntry> {
         try {
             await this.ensureStore();
             const history = await this.getHistory();
-            const updatedHistory = [entry, ...history].slice(0, 100); // Keep last 100 entries
+            const newEntry: HistoryEntry = {
+                ...entry,
+                id: `hist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                timestamp: Date.now()
+            };
+            const updatedHistory = [newEntry, ...history].slice(0, 100); // Keep last 100 entries
             await this.store?.set('history', updatedHistory);
+            return newEntry;
         } catch (error) {
             console.error('Failed to add history entry:', error);
             throw new Error('Failed to add history entry');
@@ -139,8 +144,51 @@ export class StorageManager {
     }
 }
 
+// Helper functions for history operations
+export const historyUtils = {
+    getMethodColor: (method: HttpMethod): string => {
+        switch (method) {
+            case 'GET': return 'text-green-600 dark:text-green-400';
+            case 'POST': return 'text-blue-600 dark:text-blue-400';
+            case 'PUT': return 'text-orange-600 dark:text-orange-400';
+            case 'DELETE': return 'text-red-600 dark:text-red-400';
+            case 'PATCH': return 'text-yellow-600 dark:text-yellow-400';
+        }
+    },
+
+    formatDate: (timestamp: number): string => {
+        return new Date(timestamp).toLocaleString();
+    },
+
+    filterHistory: (entries: HistoryEntry[], filters: {
+        startDate?: number;
+        endDate?: number;
+        method?: HttpMethod;
+        search?: string;
+        environment?: string;
+        tags?: string[];
+    }): HistoryEntry[] => {
+        return entries.filter(entry => {
+            if (filters.startDate && entry.timestamp < filters.startDate) return false;
+            if (filters.endDate && entry.timestamp > filters.endDate) return false;
+            if (filters.method && entry.request.method !== filters.method) return false;
+            if (filters.environment && entry.metadata.environment !== filters.environment) return false;
+            if (filters.tags?.length && !filters.tags.some(tag => entry.metadata.tags?.includes(tag))) return false;
+            if (filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                return (
+                    entry.request.url.toLowerCase().includes(searchLower) ||
+                    entry.metadata.name?.toLowerCase().includes(searchLower)
+                );
+            }
+            return true;
+        });
+    }
+};
+
+
 // React hook for storage operations
 export function useStorage() {
     const storage = StorageManager.getInstance();
-    return { storage };
+    return { storage, historyUtils };
 }

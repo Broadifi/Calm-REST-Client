@@ -1,78 +1,78 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Request-related types
 export interface Header {
-    key: string;
-    value: string;
-  }
-  
-  export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  
-  export interface RequestConfig {
-    method: HttpMethod;
-    url: string;
-    headers: Header[];
-    body: string;
-    authorization: Authorization;
-  }
-  
-  // Response-related types
-  export interface ResponseData {
-    status: number;
-    headers: Record<string, string>;
-    data: any;
-    time: number;
-  }
-  
-  // Component Props types
-  export interface HeadersEditorProps {
-    headers: Header[];
-    setHeaders: (headers: Header[]) => void;
-  }
-  
-  export interface RequestBodyEditorProps {
-    body: string;
-    setBody: (body: string) => void;
-    method: HttpMethod;
-  }
-  
-  export interface ResponseViewerProps {
-    response: ResponseData | null;
-    loading: boolean;
-  }
-  
-  export type ContentType = 
-    | 'application/json'
-    | 'application/x-www-form-urlencoded'
-    | 'text/plain';
+  key: string;
+  value: string;
+}
 
-    export type AuthType = 'none' | 'bearer' | 'basic'; 
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-    export interface Authorization {
-        type: string;
-        token?: string;
-        username?: string;
-        password?: string;
-      }
-      
+export interface RequestConfig {
+  method: HttpMethod;
+  url: string;
+  headers: Header[];
+  body: string;
+  authorization: Authorization;
+}
+
+// Response-related types
+export interface ResponseData {
+  status: number;
+  headers: Record<string, string>;
+  data: any;
+  time: number;
+}
+
+// Component Props types
+export interface HeadersEditorProps {
+  headers: Header[];
+  setHeaders: (headers: Header[]) => void;
+}
+
+export interface RequestBodyEditorProps {
+  body: string;
+  setBody: (body: string) => void;
+  method: HttpMethod;
+}
+
+export interface ResponseViewerProps {
+  response: ResponseData | null;
+  loading: boolean;
+}
+
+export type ContentType =
+  | 'application/json'
+  | 'application/x-www-form-urlencoded'
+  | 'text/plain';
+
+export type AuthType = 'none' | 'bearer' | 'basic';
+
+export interface Authorization {
+  type: string;
+  token?: string;
+  username?: string;
+  password?: string;
+}
+
 // New props interface for the Authorization component
 export interface AuthorizationEditorProps {
-    authorization: Authorization;
-    setAuthorization: (auth: Authorization) => void;
-  }
+  authorization: Authorization;
+  setAuthorization: (auth: Authorization) => void;
+}
 
-  export interface SavedRequest {
-    id: string;
-    name: string;
-    method: HttpMethod;
-    url: string;
-  }
-  
-  export interface Collection {
-    id: string;
-    name: string;
-    isOpen?: boolean;
-    requests: SavedRequest[];
-  }
+export interface SavedRequest {
+  id: string;
+  name: string;
+  method: HttpMethod;
+  url: string;
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  isOpen?: boolean;
+  requests: SavedRequest[];
+}
 
 export interface ContentTypeOption {
   value: ContentType;
@@ -83,7 +83,7 @@ export interface ContentTypeOption {
 export interface HistoryEntry {
   id: string;                    // Unique identifier for the history entry
   timestamp: number;             // When the request was made
-  
+
   // Request Details
   request: {
     url: string;                 // Full URL of the request
@@ -96,7 +96,6 @@ export interface HistoryEntry {
   // Response Details
   response: {
     status: number;              // HTTP status code
-    statusText: string;          // HTTP status text
     headers: Record<string, string>;
     body?: string;               // Response body
     size?: number;               // Size of the response in bytes
