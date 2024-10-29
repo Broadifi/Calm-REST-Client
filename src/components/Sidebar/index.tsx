@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Globe, Search, Settings, Folder, History } from "lucide-react";
 import Collections from "./Collections";
 import HistoryView from "./History";
@@ -31,6 +31,10 @@ const tabs: Tab[] = [
   },
 ];
 
+const MIN_WIDTH = 250;
+const MAX_WIDTH = 600;
+const DEFAULT_WIDTH = 300;
+
 const Sidebar: React.FC<SidebarProps> = ({
   collections,
   history = [],
@@ -46,6 +50,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [activeTab, setActiveTab] = React.useState<"collections" | "history">(
     "collections"
   );
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [startWidth, setStartWidth] = useState(0);
+
   const environmentOptions = [
     { value: "development", label: "Development" },
     { value: "staging", label: "Staging" },
@@ -56,8 +65,60 @@ const Sidebar: React.FC<SidebarProps> = ({
     setSearchTerm(e.target.value);
   };
 
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsDragging(true);
+      setStartX(e.clientX);
+      setStartWidth(width);
+    },
+    [width]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging) return;
+
+      const diff = e.clientX - startX;
+      const newWidth = Math.min(
+        Math.max(startWidth + diff, MIN_WIDTH),
+        MAX_WIDTH
+      );
+      setWidth(newWidth);
+    },
+    [isDragging, startX, startWidth]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   return (
-    <div className="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+    <div
+      className="h-screen flex-none bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col relative select-none"
+      style={{ width: `${width}px` }}
+    >
       {/* Environment Selector */}
       <div className="p-3 border-b border-gray-200 dark:border-gray-700">
         <Dropdown
@@ -121,6 +182,22 @@ const Sidebar: React.FC<SidebarProps> = ({
           <Settings className="w-4 h-4" />
           <span className="text-sm">Settings</span>
         </button>
+      </div>
+
+      {/* Resize Handle */}
+      <div
+        onMouseDown={handleMouseDown}
+        className={`absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-primary-500/10 transition-colors duration-200 ${
+          isDragging ? "bg-primary-500/10" : ""
+        }`}
+      >
+        <div
+          className={`absolute right-0 w-0.5 h-full ${
+            isDragging
+              ? "bg-primary-500"
+              : "bg-gray-200 dark:bg-gray-700 group-hover:bg-primary-500"
+          }`}
+        />
       </div>
     </div>
   );

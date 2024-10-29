@@ -202,7 +202,7 @@ const APITester: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="h-screen flex overflow-hidden bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <Sidebar
         history={history}
         collections={collections}
@@ -215,7 +215,7 @@ const APITester: React.FC = () => {
         onHistorySelect={onHistorySelect}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         <HeaderSection onSaveRequest={handleSaveRequest} />
 
         <main className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">

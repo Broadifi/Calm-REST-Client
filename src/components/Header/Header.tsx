@@ -1,5 +1,5 @@
 import React from "react";
-import { Save } from "lucide-react";
+import { Flame, Save } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
 
 interface HeaderProps {
@@ -11,7 +11,10 @@ const HeaderSection: React.FC<HeaderProps> = ({ onSaveRequest }) => {
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-          Calm REST Client
+          <div className="flex align-middle gap-2">
+            <Flame className="w-6 h-6" />
+            Calm REST Client
+          </div>
         </h1>
         <div className="flex items-center gap-2">
           <ThemeToggle />
