@@ -1,7 +1,7 @@
 import React from "react";
 import { AuthorizationEditorProps } from "./types";
 import { Key } from "lucide-react";
-import Dropdown from "./components/Dropdown";
+import Dropdown from "./components/ui/Dropdown";
 
 const AuthorizationEditor: React.FC<AuthorizationEditorProps> = ({
   authorization,

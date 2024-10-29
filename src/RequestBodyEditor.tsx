@@ -1,6 +1,6 @@
 import React from "react";
 import { RequestBodyEditorProps, ContentType } from "./types";
-import Dropdown from "./components/Dropdown";
+import Dropdown from "./components/ui/Dropdown";
 import { FileJson, FileText, FileSpreadsheet } from "lucide-react";
 
 const RequestBodyEditor: React.FC<RequestBodyEditorProps> = ({

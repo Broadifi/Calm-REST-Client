@@ -6,7 +6,7 @@ import RequestBodyEditor from "./RequestBodyEditor";
 import ResponseViewer from "./ResponseViewer";
 import AuthorizationEditor from "./AuthorizationEditor";
 import { Authorization } from "./types";
-import Dropdown from "./components/Dropdown";
+import Dropdown from "./components/ui/Dropdown";
 import ThemeToggle from "./components/ThemeToggle";
 import Sidebar from "./components/Sidebar";
 

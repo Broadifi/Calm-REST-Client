@@ -1,7 +1,7 @@
 import React from "react";
 import { Clock, CheckCircle, XCircle, Copy } from "lucide-react";
 import { ResponseViewerProps } from "./types";
-import Toast, { ToastType } from "./components/Toast";
+import Toast, { ToastType } from "./components/ui/Toast";
 import JsonViewer from "./components/JsonViewer";
 
 type TabType = "body" | "headers";
