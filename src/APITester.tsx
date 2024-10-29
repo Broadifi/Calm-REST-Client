@@ -1,16 +1,5 @@
 import React from "react";
-import {
-  ChevronDown,
-  ChevronRight,
-  FolderOpen,
-  Globe,
-  Plus,
-  Save,
-  Search,
-  Send,
-  Settings,
-  X,
-} from "lucide-react";
+import { Save, Send, X } from "lucide-react";
 import { HttpMethod, Header, ResponseData, Collection } from "./types";
 import HeadersEditor from "./HeadersEditor";
 import RequestBodyEditor from "./RequestBodyEditor";
@@ -47,12 +36,6 @@ const APITester: React.FC = () => {
     { value: "PUT", label: "PUT" },
     { value: "DELETE", label: "DELETE" },
     { value: "PATCH", label: "PATCH" },
-  ];
-
-  const environmentOptions = [
-    { value: "development", label: "Development" },
-    { value: "staging", label: "Staging" },
-    { value: "production", label: "Production" },
   ];
 
   // New states for collections and environments

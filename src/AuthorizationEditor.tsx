@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthorizationEditorProps, AuthType } from "./types";
+import { AuthorizationEditorProps } from "./types";
 import { Key } from "lucide-react";
 import Dropdown from "./components/Dropdown";
 

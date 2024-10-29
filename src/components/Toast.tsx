@@ -59,37 +59,3 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
 };
 
 export default Toast;
-
-// Add these styles to your global CSS or create a new styles file
-const styles = `
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up {
-  animation: slide-up 0.2s ease-out;
-}
-
-/* Optional: Add slide-out animation */
-@keyframes slide-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-}
-
-.animate-slide-out {
-  animation: slide-out 0.2s ease-in;
-}
-`;
