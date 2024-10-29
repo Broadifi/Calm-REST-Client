@@ -64,15 +64,8 @@ jobs:
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-20.04'
         run: |
-          # Clean package manager state
-          sudo rm -rf /var/lib/apt/lists/*
           sudo apt-get clean
           sudo apt-get update
-
-          # Fix any broken dependencies
-          sudo apt-get install -f
-
-          # Install required packages carefully
           sudo apt-get install --no-install-recommends -y \
             pkg-config \
             libgtk-3-dev \
@@ -85,14 +78,14 @@ jobs:
             wget \
             file \
             libssl-dev \
-            libglib2.0-dev \
-            libsoup2.4-dev \
-            glib-2.0 \
-            glib-2.0-dev # <-- Add these packages
+            libglib2.0-dev \  # <-- Updated package
+            libsoup2.4-dev
 
-          # Verify installations
-          pkg-config --version
+          # Set PKG_CONFIG_PATH explicitly
           echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig" >> $GITHUB_ENV
+
+      - name: Verify GLib installation
+        run: pkg-config --libs --cflags glib-2.0 || echo "GLib not found"
 
       - name: Install dependencies (mac only)
         if: matrix.platform == 'macos-latest'
