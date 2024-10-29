@@ -24,6 +24,9 @@ jobs:
       - name: Get version
         run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
+      - name: Set CARGO_HTTP_MULTIPLEXING
+        run: echo "CARGO_HTTP_MULTIPLEXING=false" >> $GITHUB_ENV
+
       - name: Create release
         id: create-release
         uses: actions/github-script@v6
